@@ -18,6 +18,8 @@ Customization & Start
 Contacts
 --------
 
-For any questions please contact 
+For any questions please contact:
+kseniyabagnyuk@gmail.com
 
-<kseniyabagnyuk@gmail.com>
+По всем вопросам пишите на:
+kseniyabagnyuk@gmail.com
