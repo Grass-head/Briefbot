@@ -3,17 +3,30 @@ Brief
 
 Description
 -----------
-
-Пользователь 1 (исполнитель) загружает свои вопросы и варианты ответов на них в бот. Затем он получает ссылку на свой опросник и передает ее пользователю 2 (заказчик). С помощью ранее установленных пользователем 1 вопросов, бот уточняет реальные потребности пользователя 2 относительно создания контента, тем самым отсекая лишнюю информацию. Текстовый отчет (техническое задание) отправляется на почту пользователю 1.
+User 1 (executor) uploads his questions and following answers to the bot. After he receives a link to his questionnaire and gives it to user 2 (customer). Using the questions previously set by user 1, the bot clarifies the real needs of user 2 in content production, and cutting off unnecessary information. A text report (technical task) is sent to the user 1 by e-mail.
 
 Functional
 --------------------
 
 Installing
 ----------
+Create a virtual environment and activate it. From an activated virtual environment, do:
+
+	.. code-block:: text
+
+pip install -r requirements.txt
 
 Customization & Start
 ---------------------
+Create file settings.py and add the following information there:
+
+	..code-block:: python
+
+
+		PROXY = {'proxy_url': 'socks5://your_SOCKS5_PROXI:1080','urllib3_proxy_kwargs': {'username': 'your login', 'password': 'your password'}}
+
+		API_KEY = "API - key, which ypu received from Godfather bot"
+
 
 Contacts
 --------
