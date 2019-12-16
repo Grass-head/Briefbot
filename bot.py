@@ -1,3 +1,4 @@
+
 from telegram.ext import Updater, CommandHandler
 
 from handlers import *
@@ -8,7 +9,7 @@ def main():
     mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY)
 
     dp = mybot.dispatcher
-    dp.add_handler(CommandHandler("start", greeting))
+    dp.add_handler(CommandHandler("start", welcome_user))
 
     mybot.start_polling()
     mybot.idle()
