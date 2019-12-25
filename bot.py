@@ -10,22 +10,20 @@ def main():
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", welcome_user))
-    dp.add_handler(CallbackQueryHandler(button))
 
     conv_handler = ConversationHandler(
-		entry_points=[RegexHandler('^(Создать опрос)$', create_brief)],
+		entry_points=[CallbackQueryHandler(create_brief)],
 
         states={
 
-            TITLE: [MessageHandler(Filters.text, title_text)],
+            NAME: [MessageHandler(Filters.text, brief_name)],
 
-            SUBJECT: [MessageHandler(Filters.text, subject_text),
-                    CommandHandler('skip', skip_subject_text)],
-
-            QUESTIONS: [MessageHandler(Filters.text, questions_text)]
+            QUESTIONS: [CallbackQueryHandler(enter_questions),
+                        MessageHandler(Filters.text, brief_questions),
+                        CommandHandler("stop", brief_stop)]
         },
 
-        fallbacks=[CommandHandler('stop', stop)]
+        fallbacks=[MessageHandler(Filters.video | Filters.photo | Filters.document, dontknow)]
     )
 
     dp.add_handler(conv_handler)
