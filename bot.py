@@ -18,9 +18,12 @@ def main():
 
             NAME: [MessageHandler(Filters.text, brief_name)],
 
-            QUESTIONS: [CallbackQueryHandler(enter_questions),
+            QUESTIONS: [CallbackQueryHandler(end_questions),
+                        CallbackQueryHandler(enter_questions),
                         MessageHandler(Filters.text, brief_questions),
-                        CommandHandler("stop", brief_stop)]
+                        ],
+
+            DONE: [CallbackQueryHandler(end_brief)]
         },
 
         fallbacks=[MessageHandler(Filters.video | Filters.photo | Filters.document, dontknow)]

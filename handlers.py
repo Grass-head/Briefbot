@@ -9,7 +9,7 @@ def welcome_user(bot, update):
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	update.message.reply_text('Для продолжения нажмите:', reply_markup=reply_markup)
 
-NAME, QUESTIONS = range(2)
+NAME, QUESTIONS, DONE = range(3)
 
 def create_brief(bot, update):
     query = update.callback_query
@@ -17,34 +17,38 @@ def create_brief(bot, update):
     return NAME
 
 def brief_name(bot, update):
-	keyboard = [[InlineKeyboardButton("Вопрос", callback_data='Введите вопрос')]]
+	keyboard = [[InlineKeyboardButton("Вопрос", callback_data='Введите вопрос')],
+				[InlineKeyboardButton("Завершить опрос", callback_data='Вы завершили опрос')]]
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	user_text = update.message.text
 	update.message.reply_text('Хорошая работа! Название "{}" записано'.format(user_text))
-	update.message.reply_text("Чтобы ввести новый вопрос нажмите кнопку:", reply_markup=reply_markup)
+	update.message.reply_text("Чтобы продолжить нажмите одну из кнопок:", reply_markup=reply_markup)
 	return QUESTIONS
 
 def enter_questions(bot, update):
 	query = update.callback_query
 	query.edit_message_text(text="{}".format(query.data))
-	return QUESTIONS
+	if query.data != 'Завершить опрос':
+		return QUESTIONS
 
-def subject_text(bot, update):
-	update.message.reply_text("Отлично! Теперь перейдем к главному!")
-	update.message.reply_text("Какое количество вопросов вы планируете создать?")
-	return QUESTIONS
+def end_questions(bot, update):
+	query = update.callback_query
+	query.edit_message_text(text="{}".format(query.data))
+	if query.data == 'Завершить опрос':
+		return DONE	
+
 
 def brief_questions(bot, update):
-	keyboard = [[InlineKeyboardButton("Вопрос", callback_data='Введите вопрос')]]
+	keyboard = [[InlineKeyboardButton("Вопрос", callback_data='Введите вопрос')],
+				[InlineKeyboardButton("Завершить опрос", callback_data='Вы завершили опрос')]]
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	user_text = update.message.text
-	update.message.reply_text('Отлично! Вопрос "{}" сохранен'.format(user_text))
-	update.message.reply_text("Если не хотите продолжать введите /stop. Чтобы ввести следующий вопрос нажмите кнопку:", reply_markup=reply_markup)
+	update.message.reply_text('Отлично! Вопрос "{}" сохранен'.format(user_text), reply_markup=reply_markup)
 	return QUESTIONS
 
-def brief_stop(bot, update):
-    update.message.reply_text('Спасибо за ваш труд! До скорой встречи!')
-    return ConversationHandler.END
+
+def end_brief(bot, update):
+	update.message.reply_text("До скорой встречи!")
 
 def dontknow(bot,update):
 	update.message.reply_text("Не понимаю. Следуйте, пожалуйста инструкции")
