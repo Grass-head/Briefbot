@@ -4,7 +4,6 @@ from telegram.ext import Updater, CommandHandler, RegexHandler, MessageHandler, 
 from handlers import *
 import settings
 
-
 def main():
     mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY)
 
@@ -18,12 +17,12 @@ def main():
 
             NAME: [MessageHandler(Filters.text, brief_name)],
 
-            QUESTIONS: [CallbackQueryHandler(end_questions),
+            QUESTIONS: [
                         CallbackQueryHandler(enter_questions),
-                        MessageHandler(Filters.text, brief_questions),
+                        MessageHandler(Filters.text, brief_questions)
                         ],
 
-            DONE: [CallbackQueryHandler(end_brief)]
+            DONE:[CallbackQueryHandler(enter_questions)]
         },
 
         fallbacks=[MessageHandler(Filters.video | Filters.photo | Filters.document, dontknow)]
