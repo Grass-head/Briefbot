@@ -2,10 +2,13 @@
 from telegram.ext import Updater, CommandHandler, RegexHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
 
 from handlers import *
-import settings
+
+PROXY = {'proxy_url': 'socks5://t1.learn.python.ru:1080',
+    'urllib3_proxy_kwargs': {'username': 'learn', 'password': 'python'}}
+
 
 def main():
-    mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY)
+    mybot = Updater('590986898:AAHD96EvOQ5x-QUeazYZh-HkR-Sg0m0Prf8', request_kwargs=PROXY)
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", welcome_user))
