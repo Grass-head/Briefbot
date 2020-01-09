@@ -35,8 +35,6 @@ def brief_name(bot, update):
 	update.message.reply_text("Чтобы продолжить нажмите одну из кнопок:", reply_markup=reply_markup)
 	return QUESTIONS
 
-
-
 def enter_questions(bot, update):
 	query = update.callback_query
 	query.edit_message_text(text="{}".format(query.data))
@@ -44,7 +42,6 @@ def enter_questions(bot, update):
 		return QUESTIONS
 	if query.data == 'Вы завершили опрос':
 		return DONE
-
 
 def brief_questions(bot, update):
 	keyboard = [[InlineKeyboardButton("Вопрос", callback_data='Введите вопрос')],

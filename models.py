@@ -9,3 +9,5 @@ class Brief(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
     is_active = Column(Boolean)
+
+
