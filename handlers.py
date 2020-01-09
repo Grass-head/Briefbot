@@ -1,9 +1,13 @@
-
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, RegexHandler, MessageHandler, Filters, ConversationHandler
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.ext.declarative import declarative_base
+from models import Brief
 
+engine = create_engine("sqlite:///briefbot.db")
+Session = sessionmaker(bind=engine)
+session = Session()
 
 def welcome_user(bot, update):
 	text_greet = 'Привет! Этот бот поможет вам составить бриф. Сформулируйте и отправьте боту вопросы брифа и получите ссылку - приглашение. Эту ссылку нужно передать клиенту. Он пройдет бриф и бот отправит вам на почту результат.'
@@ -11,16 +15,6 @@ def welcome_user(bot, update):
 	keyboard = [[InlineKeyboardButton("Создать опрос", callback_data='Введите название опроса')]]
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	update.message.reply_text('Для продолжения нажмите:', reply_markup=reply_markup)
-
-def add_brief(user_id):
-    engine = create_engine("sqlite:///briefbot.db")
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    brief = Brief()
-    brief.user_id = update.message.chat_id
-    session.add(brief)
-    session.commit()
-    session.close()
 
 NAME, QUESTIONS, DONE = range(3)
 
@@ -35,6 +29,9 @@ def brief_name(bot, update):
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	user_text = update.message.text
 	update.message.reply_text('Хорошая работа! Название "{}" записано'.format(user_text))
+	brief = Brief(user_id=update.message.chat_id, is_active=True)
+	session.add(brief)
+	session.commit()
 	update.message.reply_text("Чтобы продолжить нажмите одну из кнопок:", reply_markup=reply_markup)
 	return QUESTIONS
 

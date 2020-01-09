@@ -4,6 +4,7 @@ from telegram.ext import Updater, CommandHandler, RegexHandler, MessageHandler, 
 from handlers import *
 import settings
 
+
 def main():
     mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY)
 
