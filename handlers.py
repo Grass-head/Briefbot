@@ -4,6 +4,7 @@ from telegram.ext import Updater, CommandHandler, RegexHandler, MessageHandler, 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 
+
 def welcome_user(bot, update):
 	text_greet = 'Привет! Этот бот поможет вам составить бриф. Сформулируйте и отправьте боту вопросы брифа и получите ссылку - приглашение. Эту ссылку нужно передать клиенту. Он пройдет бриф и бот отправит вам на почту результат.'
 	update.message.reply_text(text_greet)
@@ -20,7 +21,7 @@ def add_brief(user_id):
     session.add(brief)
     session.commit()
     session.close()
-    
+
 NAME, QUESTIONS, DONE = range(3)
 
 def create_brief(bot, update):
@@ -36,6 +37,8 @@ def brief_name(bot, update):
 	update.message.reply_text('Хорошая работа! Название "{}" записано'.format(user_text))
 	update.message.reply_text("Чтобы продолжить нажмите одну из кнопок:", reply_markup=reply_markup)
 	return QUESTIONS
+
+
 
 def enter_questions(bot, update):
 	query = update.callback_query
