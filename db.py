@@ -16,13 +16,16 @@ def add_user(db, effective_user):
 	return user
 
 def add_brief(db, effective_user, message):
-	brief = {
-		"user_id": effective_user.id,
-		"is_active": True,
-		"brief_name": message.text
-	}
-	db.briefs.insert_one(brief)
+	current_brief = db.briefs.find_one({"brief_name": message.text})
+	if not current_brief:
+		brief = {
+			"user_id": effective_user.id,
+			"is_active": True,
+			"brief_name": message.text
+		}
+		db.briefs.insert_one(brief)
 	return brief
+
 
 def add_question(db, message):
 	question = {
