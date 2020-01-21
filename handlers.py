@@ -1,3 +1,5 @@
+import logging
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove, ReplyKeyboardMarkup
 
 from db import db, add_user, add_brief, add_question
@@ -35,14 +37,8 @@ def brief_name(bot, update):
 def enter_questions(bot, update):
 	query = update.callback_query
 	query.edit_message_text(text="{}".format(query.data))
-	print("продолжение опроса")
 	return QUESTIONS 
 
-def end_questions(bot, update):
-	query = update.callback_query
-	query.edit_message_text(text="{}".format(query.data))
-	print("конец опроса")
-	return DONE
 
 def brief_questions(bot, update):
 	question = add_question(db, update.message)
@@ -54,21 +50,29 @@ def brief_questions(bot, update):
 	return QUESTIONS
 
 
+def end_questions(bot, update):
+	query = update.callback_query
+	keyboard = [[InlineKeyboardButton("Посмотреть опрос", callback_data='Вы запросили текущий опрос')],
+	[InlineKeyboardButton("Мои опросы", callback_data='Вы запросили список ваших опросов')]]
+	reply_markup = InlineKeyboardMarkup(keyboard, resize_keyboard=True)
+	query.edit_message_text(text="{}. Выберите следующее действие:".format(query.data), reply_markup=reply_markup)
+	return DONE
+
+
 def dontknow(bot, update):
 	update.message.reply_text("Не понимаю. Следуйте, пожалуйста, инструкции")
 
+def keyboard_my_brief():
+	my_keyboard = ReplyKeyboardMarkup(['Мои опросы'])
+	return my_keyboard
 
-def brief_check_result(bd, bot, effective_user, update):
-	print("начало функции brief_check_result")
-	my_keyboard = ReplyKeyboardMarkup(['Мои опросы'], one_time_keyboard=True)
-	update.message.reply_text("Вы проделали отличную работу! Сейчас вам придут данные для проверки.")
-	update.message.reply_text('Посмотреть все созданные вами опросы можно при помощи кнопки "Мои опросы"', reply_markup=my_keyboard)
+def brief_check_result(bot, update, effective_user, bd):
+	update.message.reply_text("Сейчас вам придут данные для проверки.")
 	current_user = db.briefs.findone({"user_id": effective_user.id})
 	if current_user:
-		brief_prev_id = db.briefs.findone({"_Id"})
-		brief_prev_name = db.briefs.findone({"brief_name"})
-	update.message.reply_text('ID опроса "{}"'.format(brief_prev_id), reply_markup=my_keyboard)
-	update.message.reply_text('Название опроса "{}"'.format(brief_prev_name), reply_markup=my_keyboard)
+		brief_preview_name = db.briefs.findone({"brief_name"})
+	update.message.reply_text('Название опроса "{}"'.format(brief_preview_name), reply_markup=keyboard_my_brief())
+	update.message.reply_text('ID опроса "{}"'.format(brief_prev_id), reply_markup=keyboard_my_brief())
 
 
 def brief_list(db, effective_user):
