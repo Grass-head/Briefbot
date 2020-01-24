@@ -30,7 +30,7 @@ def main():
                         CallbackQueryHandler(end_questions, pattern="^Вы завершили опрос$")
                         ],
             DONE: [CallbackQueryHandler(brief_check_result, pattern="^Вы запросили текущий опрос$"),
-                    CallbackQueryHandler(brief_list, pattern="^Вы запросили список ваших опросов$")
+                    CallbackQueryHandler(brief_lists, pattern="^Вы запросили список ваших опросов$")
             ]
         },
 

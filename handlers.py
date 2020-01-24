@@ -2,7 +2,8 @@ import logging
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove, ReplyKeyboardMarkup
 
-from db import db, add_user, add_brief, add_question
+from db import db, add_user, add_brief, add_question, get_current_user, get_current_brief
+from bson.json_util import dumps
 
 
 def welcome_user(bot, update):
@@ -54,7 +55,7 @@ def end_questions(bot, update):
 	query = update.callback_query
 	keyboard = [[InlineKeyboardButton("Посмотреть опрос", callback_data='Вы запросили текущий опрос')],
 	[InlineKeyboardButton("Мои опросы", callback_data='Вы запросили список ваших опросов')]]
-	reply_markup = InlineKeyboardMarkup(keyboard, resize_keyboard=True)
+	reply_markup = InlineKeyboardMarkup(keyboard)
 	query.edit_message_text(text="{}. Выберите следующее действие:".format(query.data), reply_markup=reply_markup)
 	return DONE
 
@@ -66,18 +67,24 @@ def keyboard_my_brief():
 	my_keyboard = ReplyKeyboardMarkup(['Мои опросы'])
 	return my_keyboard
 
-def brief_check_result(bot, update, effective_user, bd):
-	update.message.reply_text("Сейчас вам придут данные для проверки.")
-	current_user = db.briefs.findone({"user_id": effective_user.id})
-	if current_user:
-		brief_preview_name = db.briefs.findone({"brief_name"})
+def brief_check_result(bot, update):
+	query = update.callback_query
+	query.edit_message_text(text="{}. Сейчас вам придут данные для проверки.".format(query.data))
+	current_user = get_current_user(db, update.effective_user)
+	print(current_user)
+	current_brief = get_current_brief(db, update.message)
+	print(current_brief)
+	if current_user and current_brief:
+		brief_preview_name = current_brief['brief_name']
 	update.message.reply_text('Название опроса "{}"'.format(brief_preview_name), reply_markup=keyboard_my_brief())
-	update.message.reply_text('ID опроса "{}"'.format(brief_prev_id), reply_markup=keyboard_my_brief())
 
 
-def brief_list(db, effective_user):
-	current_user = db.briefs.findone({"user_id": effective_user.id})
+def brief_lists(bot, update):
+	query = update.callback_query
+	query.answer(text="{}. В следующем сообщении будут данные по всем опросам, которые вы создали.".format(query.data), show_alert=True)
+	current_user = get_current_user(db, update.effective_user)
 	if current_user:
-		brief_list = db.briefs.find({"_Id"})
-	return brief_list
-
+		brief_list = db.briefs.find()
+		for item in brief_list:
+			brief_list_names = item["brief_name"]
+			bot.send_message(chat_id=query.message.chat.id, text="{}".format(brief_list_names))

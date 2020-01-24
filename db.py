@@ -44,3 +44,11 @@ def add_question(db, message):
 	#}
 	#db.answers.insert_one(answer)
 	#return answer
+
+def get_current_user(db, effective_user):
+	user = db.users.find_one({"user_id": effective_user.id})
+	return user
+
+def get_current_brief(db, message):
+	brief = db.briefs.find_one({"brief_name": message.text})
+	return brief
