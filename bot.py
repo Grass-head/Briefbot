@@ -39,8 +39,8 @@ def main():
 			ANSWERS: [
 			MessageHandler(Filters.text, brief_answers),
 			CallbackQueryHandler(enter_answers, pattern="^Ввести еще ответ на вопрос$"),
-			CallbackQueryHandler(switch_answers_to_questions, pattern="^Введите новый вопрос$"),
-			CallbackQueryHandler(switch_answers_to_end, pattern="^Завершить опрос$")
+			CallbackQueryHandler(switch_answers_to_questions, pattern="^Введите вопрос$"),
+			CallbackQueryHandler(switch_answers_to_end, pattern="^Вы завершили опрос$")
 			],
 
 			DONE: [
