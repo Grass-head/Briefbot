@@ -6,36 +6,53 @@ from handlers import *
 import settings
 import logging
 
+
 def main():
     logging.basicConfig(
         format='%(asctime)s - %(levelname)s - %(message)s',
         level=logging.INFO,
         filename='bot.log')
-    
-    mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY)
+
+    mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY, use_context=True)
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", welcome_user))
 
     conv_handler = ConversationHandler(
-		entry_points=[CallbackQueryHandler(create_brief)],
+    	entry_points=[
+    	CallbackQueryHandler(create_brief)
+    	],
 
-        states={
+		states={
 
-            NAME: [MessageHandler(Filters.text, brief_name)],
+			NAME: [
+			MessageHandler(Filters.text, brief_name)
+			],
 
-            QUESTIONS: [
-                        CallbackQueryHandler(enter_questions, pattern="^Введите вопрос$"),
-                        MessageHandler(Filters.text, brief_questions),
-                        CallbackQueryHandler(end_questions, pattern="^Вы завершили опрос$")
-                        ],
-            DONE: [CallbackQueryHandler(brief_check_result, pattern="^Вы запросили текущий опрос$"),
-                    CallbackQueryHandler(brief_lists, pattern="^Вы запросили список ваших опросов$")
-            ]
-        },
+			QUESTIONS: [
+			CallbackQueryHandler(enter_questions, pattern="^Введите вопрос$"),
+			MessageHandler(Filters.text, brief_questions),
+			CallbackQueryHandler(enter_answers, pattern="^Ввести ответ на вопрос$"),
+			CallbackQueryHandler(end_questions, pattern="^Вы завершили опрос$")
+			],
 
-        fallbacks=[MessageHandler(Filters.video | Filters.photo | Filters.document, dontknow)]
-    )
+			ANSWERS: [
+			MessageHandler(Filters.text, brief_answers),
+			CallbackQueryHandler(enter_answers, pattern="^Ввести еще ответ на вопрос$"),
+			CallbackQueryHandler(switch_answers_to_questions, pattern="^Введите новый вопрос$"),
+			CallbackQueryHandler(switch_answers_to_end, pattern="^Завершить опрос$")
+			],
+
+			DONE: [
+			CallbackQueryHandler(brief_check_result, pattern="^Вы запросили текущий опрос$"),
+			CallbackQueryHandler(brief_lists, pattern="^Вы запросили список ваших опросов$")
+				]
+				},
+		fallbacks=[
+		MessageHandler(Filters.video | Filters.photo | Filters.document, dontknow)
+		]
+		)
+
     dp.add_handler(conv_handler)
 
     mybot.start_polling()
@@ -43,4 +60,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+	main()
